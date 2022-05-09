@@ -1,7 +1,19 @@
 # Short Answers:
+1. If you needed to retrieve your .csv data from a multitude of 3rd party services (ie: Google sheets), how would you structure your code in such a way that you could add on additional inputs in the future?
+> I would need to add another layer of logic that specifically checks for either a local file OR a URL from an approved list of sources so that it could capture the desired CSV data and pass it along accordingly.
 
-If you needed to retrieve your .csv data from a multitude of 3rd party services (ie: Google sheets), how would you structure your code in such a way that you could add on additional inputs in the future?
-Are there any additional details that you could have used in order to make more effective design decisions? List any questions or clarifications you would have requested before beginning this project.
-If you were to pass this problem off to a junior developer, how would you approach structuring a project plan for them? 
+2. Are there any additional details that you could have used in order to make more effective design decisions? List any questions or clarifications you would have requested before beginning this project.
+> I think inconsistent data formatting and how to handle special characters in the files like commas and quotes etc. Due to time constraints, I chose to simply omit most (if not all) of these special characters in order to explicitly manipulate the data the way I wanted. In real life situations however, you will get "messy data" like this quite regularally, but it might be nice set that expectation ahead of time.
+
+3. If you were to pass this problem off to a junior developer, how would you approach structuring a project plan for them? 
 If 1 story point is a single work day, how many story points would you estimate it would take for the junior developer on this project?
-Are there any feature extensions that you would like to implement that are outside of the base requirements? If so, list them here along with the requirements.
+> Man that can really very depending on the dev, but I guess I would say about a week or 5-7 story points?
+
+4. Are there any feature extensions that you would like to implement that are outside of the base requirements? If so, list them here along with the requirements.
+> I would like the app to accept csv files from any directory (rather than requiring that the input files reside in the fixtures folder as it is configured currently). I set it up this way so that you can omit the file path when running the command for easier testing but in the real world that isn't always so ideal. To make this change we would just have to adjust how the filename param is passes (probabally via parsing from the given path name) so that we only grab the end of the string. Eg find the position of the last '\' character, and then grab all characters beyond that point and return it as a new filename string rather than explicitly removing the path prefix.
+
+> Some sort of solution (or error handling) for when a user adds a CSV file where it's columns don't match with the others. The easiest way to probabally do this would to be compare the column count of each CSV file and make sure they match before proceeding. That wouldn't be 100% perfect for instances where the column count matches but the column headers or data do not. To be REALLY thorough, we would want to count and capture the column headers of each file and either cancel execution or simply omit a particular CSV file if it doesn't match.
+
+> Lastly (and arguably most difficultly) it would also be ideal if the program could retain extra special characters in a 'cells' text string like quote marks and commas. Currently these are simply stripped away or omitted from the input data to keep things from breaking due to the additional complexity needed to work around several such fringe cases otherwise. For example `Name: "Gingham" Shorts` vs just `Name: Gingham Shorts`, or `Mosby Designs, LLC` vs just `Mosby Designs LLC`. For this we would probabally need to replace certian characters like `\n` with one seldom used like `|` so that when we break apart our data for further parsing and re-organizing we can more easily keep such oddities compartamentalized. When your input is inconsistent, it can be REALLY hard to think of and plan for all the various ways such characters can break your code, so this is where we would have to break these down even further to analyze and test on as many different situations as we can think of to cover our bases.
+
+Back to [README](https://github.com/Gamlilorien/csv-combiner)

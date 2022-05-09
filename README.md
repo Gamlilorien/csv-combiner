@@ -48,7 +48,37 @@ output.csv
 |2014-11-27|gas|ford|ranger|8000|test2.csv|
 |2014-12-13|gas|mitsubishi|outlander|8000|test2.csv|
 
+## NOTES
+- Please note the NODE prefix and .js extension of the terminal command, eg 'node ./csv-combiner.js' rather than the intended PHP file of './csv-combiner.php'. I ended up just using Node.js and some Vanilla JavaScript in leau of PHP.
+
+- The given CSV files need to match in column formatting. For example, if one CSV has `date, model, make & price` as the columns, all other CSVs intended to be merged should also be structured with such columns and types of data.
+
+- NOTE: Data input should NOT contain commas within a single cell value. For example, a table field containing something like `Chauncy, D.D.S` as a single value can cause unexpected results due to how the csv data is being broken apart and reformatted.
+
+- While I did not have a 2 GB CSV file to test, I did run tests with CSV files in excess of 10 MB in size and the program worked without a hitch (that's over 60k records)!
+
+- Currently all input CSV files need to reside within the `fixtures` directory. Due to this you can omit the `./fixtures/` file path prefix.
+
 ## Future Development
-* Eventually I would like the app to accept csv files from any directory (rather than requiring that the input files reside in the fixtures folder as it is configured currently).
-* Also, it would be great if the program could detect or handle when columns in the CSV files provided don't match - at least cancel the script and warn the user if nothing else.
-* Additionally, it would also be ideal if the program could retain extra special characters in a cells 'text' string like quote marks and commas. Currently these are simply stripped away or omitted from the input data to keep things from breaking do to the additional complexity needed to work around them otherwise.
+See [Short Answers](https://github.com/Gamlilorien/csv-combiner/shortAnswers.md) for some ideas.
+
+## Installation & Use
+Down load the repo and then `cd` to the new directory in your terminal and type `npm install`.
+
+Base command structure:
+**node csv-combiner.js csv1 csv2 optionalCsv1 optionalCsv2 > outputFileName.csv**
+- A minimum of 2 CSV files are required
+- Anything after the `>` will be the name of the new output file of your choice
+
+Then you can use some of these suggested commands to test:
+`node csv-combiner.js ./fixtures/accessories.csv ./fixtures/clothing.csv > combined.csv`
+`node csv-combiner.js ./fixtures/accessories.csv ./fixtures/household_cleaners.csv > combined.csv`
+`node csv-combiner.js ./fixtures/test.csv ./fixtures/test2.csv > combined.csv`
+
+You can also omit the `./fixtures/` path prefix due to the command requring all CSVs to exist in said direcotry anyway
+`node csv-combiner.js test.csv test2.csv test3.csv > combined.csv`
+`node csv-combiner.js clothing2.csv accessories2.csv clothing.csv accessories.csv, household_cleaners > combined.csv`
+`node csv-combiner.js usSmiths.csv usAddresses18k.csv usAddresses18k_2.csv usAddresses18k_3.csv > combined.csv`
+
+If you wish to see the output in the console (rather than outputting to a new file) then simply omit the final `> combined.csv` argument.
+`node csv-combiner.js test.csv test2.csv test3.csv`
