@@ -49,3 +49,6 @@ output.csv
 |2014-12-13|gas|mitsubishi|outlander|8000|test2.csv|
 
 ## Future Development
+* Eventually I would like the app to accept csv files from any directory (rather than requiring that the input files reside in the fixtures folder as it is configured currently).
+* Also, it would be great if the program could detect or handle when columns in the CSV files provided don't match - at least cancel the script and warn the user if nothing else.
+* Additionally, it would also be ideal if the program could retain extra special characters in a cells 'text' string like quote marks and commas. Currently these are simply stripped away or omitted from the input data to keep things from breaking do to the additional complexity needed to work around them otherwise.

@@ -6,14 +6,16 @@ var assert = require('chai').assert
 // node ./csv-combiner.js ./fixtures/accessories.csv ./fixtures/clothing.csv > combined.csv
 // node ./csv-combiner.js ./fixtures/accessories.csv ./fixtures/household_cleaners.csv > combined.csv
 // =========== INITIAL TESTS ===========
-assert(process.argv[2] !== undefined, 'file1 path is missing'); //Filenames can not be an empty string
-assert(process.argv[3] !== undefined, 'file2 path is missing');
+// assert(process.argv[2] !== undefined, 'file1 path is missing'); //Filenames can not be an empty string
+// assert(process.argv[3] !== undefined, 'file2 path is missing');
 
 // =========== GLOBAL VARIABLES ===========
 let objectArray = [];
 let data = "";
-let file1 = process.argv[2].replace('./fixtures/', '');
-let file2 = process.argv[3].replace('./fixtures/', '');
+let csvCount = process.argv.length -2;
+let csvProcessed = 0;
+// let file1 = process.argv[2].replace('./fixtures/', '');
+// let file2 = process.argv[3].replace('./fixtures/', '');
 // ===========
 
 // =========== Break Down of Concerns ===========
@@ -40,7 +42,7 @@ let file2 = process.argv[3].replace('./fixtures/', '');
 
 // *********** Functions ***********
 //=========== sanitizeCSV() START ===========
-function sanitizeCSV(filename) {
+function sanitizeCSV(filename, endFile) {
     //Test to verify that there we have a valid file path
     try {
         if (fs.existsSync(filename)) {
@@ -58,13 +60,14 @@ function sanitizeCSV(filename) {
         //remove special characters like \" and " besides spaces and commas (if any) 
         var output = data.replace(/[&\/\\#+()$~%'"*?<>{}]/g, '');
         output = data.split("\n");
-       convertToJSON(output, filename);
+        console.log(`Filename: ${filename}, endFile: ${endFile}, csvCount: ${csvCount}, csvProcessed: ${csvProcessed}`)
+       convertToJSON(output, filename, endFile);
     })
 };
 // =========== sanitizeCSV() END ===========
 
 // =========== convertToJSON() START ===========
-function convertToJSON(string, filename) {
+function convertToJSON(string, filename, endFile) {
     let columnCount;
     //grab the headers and write as first line of data variable rather than setting as a static string
     if(data.length === 0) {
@@ -102,12 +105,18 @@ function convertToJSON(string, filename) {
         }
     }
     //console.log(objectArray);
-    exportCSV(objectArray);
+    csvProcessed = csvProcessed +1;
+    console.log(`csvCount: ${csvCount}, csvProcessed: ${csvProcessed}`)
+    //Only continue if we are processing the last of the CSV files
+    if (csvProcessed == csvCount) {
+        exportCSV(objectArray, endFile);
+    }
+    //exportCSV(objectArray, endFile);
 };
 // =========== convertToJSON() END ===========
 
 // =========== exportCSV() START ===========
-function exportCSV(array) {
+function exportCSV(array, endFile) {
     for (let i = 0; i < array.length; i++) {
         let row = array[i];
         let objLength = Object.keys(row).length; // row.length won't work for an {} object, use Object.keys().length instead
@@ -127,7 +136,12 @@ function exportCSV(array) {
     let lastValue = Object.keys(array[arrayEndIndex]).length -1;
     let lastEntry = array[arrayEndIndex];
     let lastFileName = lastEntry[lastValue];
-    if(lastFileName == file2) {
+    // if(lastFileName == endFile) {
+    //     console.log(data);
+    //     //fs.writeFileSync('combined.csv', data);
+    // }
+    // THIS should always evaluate since this function is only intended to run when processing the last file
+    if(csvProcessed == csvCount) {
         console.log(data);
         //fs.writeFileSync('combined.csv', data);
     }
@@ -142,7 +156,20 @@ function exportCSV(array) {
 //node csv-combiner.js ./fixtures/accessories.csv ./fixtures/household_cleaners.csv > combined.csv
 //node csv-combiner.js ./fixtures/usSmiths.csv ./fixtures/usAddresses18k.csv > combined.csv
 function runCommand() {
-    sanitizeCSV(file1);
-    sanitizeCSV(file2);
+    //Validate that there are at least 4 or more command arguments as the first two (ie 0-1) will always be ignored and any thing after '>' will not be considered either.
+    let arguments = process.argv;
+    let argCount = arguments.length;
+    assert.isAbove(argCount, 3, `ERROR: a minimum of 2 CSV inputs need to be provided. Inputs given: ${argCount -2}`);
+    if(argCount > 3) {
+        let endIndex = argCount -1;
+        let endFile = arguments[endIndex].replace('./fixtures/', '');
+        for(let i =2; i < argCount; i++) {
+            let filename = arguments[i].replace('./fixtures/', '');
+            //console.log(`Filename: ${filename}, endFile: ${endFile}, csvCount: ${csvCount}, csvProcessed: ${csvProcessed}`)
+            sanitizeCSV(filename, endFile);
+        }
+    }
+    // sanitizeCSV(file1);
+    // sanitizeCSV(file2);
 }
 runCommand();
