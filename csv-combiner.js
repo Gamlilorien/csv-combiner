@@ -1,10 +1,11 @@
 const fs = require('fs');
 var assert = require('chai').assert
 
-//Run on file load:
-// =========== INITIAL TESTS ===========
-// assert(process.argv[2] !== undefined, 'file1 path is missing'); //Filenames can not be an empty string
-// assert(process.argv[3] !== undefined, 'file2 path is missing');
+// =========== Break Down of Concerns ===========
+// 1. Sanitize the provided CSV text
+// 2. Convert the text into an Array of JSON objects for each row or record
+// 3. After the final CSV file is processed, iterate through our newly cleaned and organized data to construct and export
+// into the desired format.
 
 // =========== GLOBAL VARIABLES ===========
 let objectArray = [];
@@ -12,12 +13,6 @@ let data = "";
 let csvCount = process.argv.length -2;
 let csvProcessed = 0;
 // ===========
-
-// =========== Break Down of Concerns ===========
-// 1. Sanitize the provided CSV text
-// 2. Convert the text into an Array of JSON objects for each row or record
-// 3. Iterate through our newly cleaned and organized data to construct and export into the desired format.
-
 
 // *********** Functions ***********
 //=========== sanitizeCSV() START ===========
@@ -31,6 +26,7 @@ function sanitizeCSV(filename) {
         console.error(err)
     }
     //End test
+    assert.include(filename, '.csv', 'The file provided does not have the expected .csv extension')
     
     fs.readFile('./fixtures/' +filename, "utf8", function(err, data) {
         if (err) {
@@ -121,7 +117,7 @@ function runCommand() {
     //Validate that there are at least 4 or more command arguments as the first two (ie 0-1) will always be ignored and any thing after '>' will not be considered either.
     let arguments = process.argv;
     let argCount = arguments.length;
-    assert.isAbove(argCount, 3, `ERROR: a minimum of 2 CSV inputs need to be provided. Inputs given: ${argCount -2}`);
+    assert.isAbove(argCount, 3, `ERROR: a minimum of 2 CSV inputs need to be provided from the user. 2 system inputs +${argCount -2} from user`);
     if(argCount > 3) {
         for(let i =2; i < argCount; i++) {
             let filename = arguments[i].replace('./fixtures/', '');

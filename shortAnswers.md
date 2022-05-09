@@ -1,3 +1,5 @@
+Back to [README](https://github.com/Gamlilorien/csv-combiner)
+
 # Short Answers:
 1. If you needed to retrieve your .csv data from a multitude of 3rd party services (ie: Google sheets), how would you structure your code in such a way that you could add on additional inputs in the future?
 > I would need to add another layer of logic that specifically checks for either a local file OR a URL from an approved list of sources so that it could capture the desired CSV data and pass it along accordingly.
@@ -15,5 +17,3 @@ If 1 story point is a single work day, how many story points would you estimate 
 > Some sort of solution (or error handling) for when a user adds a CSV file where it's columns don't match with the others. The easiest way to probabally do this would to be compare the column count of each CSV file and make sure they match before proceeding. That wouldn't be 100% perfect for instances where the column count matches but the column headers or data do not. To be REALLY thorough, we would want to count and capture the column headers of each file and either cancel execution or simply omit a particular CSV file if it doesn't match.
 
 > Lastly (and arguably most difficultly) it would also be ideal if the program could retain extra special characters in a 'cells' text string like quote marks and commas. Currently these are simply stripped away or omitted from the input data to keep things from breaking due to the additional complexity needed to work around several such fringe cases otherwise. For example `Name: "Gingham" Shorts` vs just `Name: Gingham Shorts`, or `Mosby Designs, LLC` vs just `Mosby Designs LLC`. For this we would probabally need to replace certian characters like `\n` with one seldom used like `|` so that when we break apart our data for further parsing and re-organizing we can more easily keep such oddities compartamentalized. When your input is inconsistent, it can be REALLY hard to think of and plan for all the various ways such characters can break your code, so this is where we would have to break these down even further to analyze and test on as many different situations as we can think of to cover our bases.
-
-Back to [README](https://github.com/Gamlilorien/csv-combiner)
